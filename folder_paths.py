@@ -6,7 +6,13 @@ supported_pt_extensions = set(['.ckpt', '.pt', '.bin', '.pth', '.safetensors'])
 folder_names_and_paths = {}
 
 base_path = os.path.dirname(os.path.realpath(__file__))
+
+# custom models dir in workspace
 models_dir = os.path.join(base_path, "models")
+if int(os.environ.get("DEPLOYMENT")):
+    volume_path = os.environ.get("WORKSPACE_PATH")
+    models_dir = os.path.join(volume_path, 'models')
+
 folder_names_and_paths["checkpoints"] = ([os.path.join(models_dir, "checkpoints")], supported_pt_extensions)
 folder_names_and_paths["configs"] = ([os.path.join(models_dir, "configs")], [".yaml"])
 
@@ -222,7 +228,7 @@ def get_filename_list(folder_name):
         filename_list_cache[folder_name] = out
     return list(out[0])
 
-def get_save_image_path(filename_prefix, output_dir, image_width=0, image_height=0):
+def get_save_image_path(filename_prefix, output_dir, image_width=0, image_height=0, path_save=False):
     def map_filename(filename):
         prefix_len = len(os.path.basename(filename_prefix))
         prefix = filename[:prefix_len + 1]
@@ -244,7 +250,7 @@ def get_save_image_path(filename_prefix, output_dir, image_width=0, image_height
 
     full_output_folder = os.path.join(output_dir, subfolder)
 
-    if os.path.commonpath((output_dir, os.path.abspath(full_output_folder))) != output_dir:
+    if not path_save and os.path.commonpath((output_dir, os.path.abspath(full_output_folder))) != output_dir:
         err = "**** ERROR: Saving image outside the output folder is not allowed." + \
               "\n full_output_folder: " + os.path.abspath(full_output_folder) + \
               "\n         output_dir: " + output_dir + \
