@@ -631,10 +631,8 @@ class PromptServer():
         await runner.setup()
         site = web.TCPSite(runner, address, port)
         await site.start()
-
-        if verbose:
-            print("Starting server\n")
-            print("To see the GUI go to: http://{}:{}".format(address, port))
+        print("Starting server\n")
+        print("To see the GUI go to: http://{}:{}".format(address, port))
         if call_on_start is not None:
             call_on_start(address, port)
 
@@ -650,3 +648,4 @@ class PromptServer():
                 traceback.print_exc()
 
         return json_data
+  

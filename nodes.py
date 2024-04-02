@@ -1777,7 +1777,8 @@ class PathSaveImage:
                     for x in extra_pnginfo:
                         metadata.add_text(x, json.dumps(extra_pnginfo[x]))
 
-            file = f'{filename_prefix}_{batch_number}.png'
+            file = os.path.join(filename_prefix, f'{batch_number}.png')
+            subfolder = filename_prefix
             print(f"saving at {file}")
             img.save(file, pnginfo=metadata, compress_level=self.compress_level)
             results.append({

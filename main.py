@@ -213,14 +213,18 @@ if __name__ == "__main__":
         for config_path in itertools.chain(*args.extra_model_paths_config):
             load_extra_path_config(config_path)
 
+    # something hangs here
     init_custom_nodes()
 
     cuda_malloc_warning()
+    print("malloc warning")
 
     server.add_routes()
     hijack_progress(server)
+    print("add & hijack server")
 
     threading.Thread(target=prompt_worker, daemon=True, args=(q, server,)).start()
+    print("start server")
 
     if args.output_directory:
         output_dir = os.path.abspath(args.output_directory)
@@ -231,6 +235,7 @@ if __name__ == "__main__":
     folder_paths.add_model_folder_path("checkpoints", os.path.join(folder_paths.get_output_directory(), "checkpoints"))
     folder_paths.add_model_folder_path("clip", os.path.join(folder_paths.get_output_directory(), "clip"))
     folder_paths.add_model_folder_path("vae", os.path.join(folder_paths.get_output_directory(), "vae"))
+    print("add paths")
 
     if args.input_directory:
         input_dir = os.path.abspath(args.input_directory)
@@ -238,18 +243,24 @@ if __name__ == "__main__":
         folder_paths.set_input_directory(input_dir)
 
     if args.quick_test_for_ci:
+        print("exiting cuz quick_test_for_ci")
         exit(0)
 
     call_on_start = None
+    print('auto launch', args.auto_launch)
     if args.auto_launch:
         def startup_server(address, port):
             import webbrowser
             if os.name == 'nt' and address == '0.0.0.0':
                 address = '127.0.0.1'
+            print(f"address: {address}")
             webbrowser.open(f"http://{address}:{port}")
         call_on_start = startup_server
+        print("add startup_server")
+
 
     try:
+        print("running loop")
         loop.run_until_complete(run(server, address=args.listen, port=args.port, verbose=not args.dont_print_server, call_on_start=call_on_start))
     except KeyboardInterrupt:
         print("\nStopped server")

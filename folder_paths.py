@@ -1,17 +1,27 @@
 import os
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 supported_pt_extensions = set(['.ckpt', '.pt', '.bin', '.pth', '.safetensors'])
 
 folder_names_and_paths = {}
-
 base_path = os.path.dirname(os.path.realpath(__file__))
+if os.environ.get("VOLUME_PATH"):
+    models_dir = os.path.join(os.environ.get("VOLUME_PATH"), "models")
+else:
+    models_dir = os.path.join(base_path, 'models')
 
 # custom models dir in workspace
-models_dir = os.path.join(base_path, "models")
-if int(os.environ.get("DEPLOYMENT")):
+'''
+DEP = os.environ.get("DEPLOYMENT")
+if DEP and int(DEP):
+    base_path = os.environ.get('DATA_PATH')
+    models_dir = os.path.join(base_path, "models")
     volume_path = os.environ.get("WORKSPACE_PATH")
     models_dir = os.path.join(volume_path, 'models')
+'''
 
 folder_names_and_paths["checkpoints"] = ([os.path.join(models_dir, "checkpoints")], supported_pt_extensions)
 folder_names_and_paths["configs"] = ([os.path.join(models_dir, "configs")], [".yaml"])

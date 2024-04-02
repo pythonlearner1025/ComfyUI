@@ -10,3 +10,9 @@ Pillow
 scipy
 tqdm
 psutil
+rembg
+numba
+python-dotenv
+runpod
+websocket-client
+supabase
